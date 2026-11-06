@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
 import { Suspense } from "react";
 import { CategoryBar } from "@/components/category-bar";
+import { FetchNewsButton } from "@/components/fetch-news-button";
 import { NewsCard } from "@/components/news-card";
 import { SignInGate } from "@/components/sign-in-gate";
 import { getArticles, getCategories } from "@/db/queries";
@@ -77,7 +78,10 @@ function Header() {
     <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-900/80">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
         <h1 className="text-lg font-bold tracking-tight">AI 뉴스 수집기</h1>
-        <UserButton />
+        <div className="flex items-center gap-3">
+          <FetchNewsButton />
+          <UserButton />
+        </div>
       </div>
     </header>
   );
