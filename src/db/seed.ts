@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { db } from "./index";
 import { articles, categories } from "./schema";
 
-const USER_ID = "user_sample_001"; // Clerk ID 자리표시자
+const USER_ID = "user_3LWvuHWPCdMqoPMJxh6fqv9giN3"; // 내 Clerk 사용자 ID
 
 const categorySeeds = [
   { name: "모델·연구", description: "새 AI 모델 발표, 논문, 벤치마크" },
