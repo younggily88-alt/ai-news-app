@@ -16,6 +16,10 @@ Only the bare `create-next-app` scaffold exists (Next.js 16.4.3, React 19, TypeS
 
 `AGENTS.md` warns that this Next.js version has breaking changes from older releases. Read the relevant guide in `node_modules/next/dist/docs/` before writing Next.js code (routing, middleware, route handlers, etc.) and heed deprecation notices.
 
+## UI guide
+
+`ui.md` (Korean) is the UI/style guide: app name "AI 뉴스 수집기", Tailwind design tokens, dashboard layout (category chips + "카테고리 추가" button above the card grid), component snippets, and loading/error/empty states. Read it before writing or changing any UI, and follow it for colors, spacing, and component structure.
+
 ## Product architecture (from PRD.md)
 
 Web app that collects overseas AI news via RSS (TechCrunch AI, The Verge AI), then uses Claude to translate the title to Korean, summarize in Korean, and classify into user-defined categories; shown as cards.
