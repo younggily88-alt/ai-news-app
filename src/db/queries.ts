@@ -44,4 +44,37 @@ export async function getArticles(userId: string, categoryId?: number | null) {
     .orderBy(desc(articles.publishedAt), desc(articles.id));
 }
 
+type NewsItem = {
+  url: string;
+  source: string;
+  title: string;
+  summary: string;
+  publishedAt: Date;
+};
+
+// 이미 저장된 URL((user_id, url) 기준)은 건너뛰고, 새로 저장된 개수를 반환한다.
+// 번역·분류 전이므로 title_ko/summary_ko 에는 원문 제목과 RSS 요약을 임시로 넣고,
+// category_id 는 비워 둔다(미분류).
+export async function insertArticles(userId: string, items: NewsItem[]) {
+  if (items.length === 0) return 0;
+
+  const inserted = await db
+    .insert(articles)
+    .values(
+      items.map((item) => ({
+        userId,
+        url: item.url,
+        source: item.source,
+        originalTitle: item.title,
+        titleKo: item.title,
+        summaryKo: item.summary,
+        publishedAt: item.publishedAt,
+      })),
+    )
+    .onConflictDoNothing({ target: [articles.userId, articles.url] })
+    .returning({ id: articles.id });
+
+  return inserted.length;
+}
+
 export type ArticleListItem = Awaited<ReturnType<typeof getArticles>>[number];
