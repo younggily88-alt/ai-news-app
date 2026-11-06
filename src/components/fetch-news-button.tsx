@@ -8,15 +8,20 @@ type Notice = { kind: "success" | "error"; message: string };
 type FetchResult = {
   added: number;
   skipped: number;
+  failed: number;
+  remaining: number;
   failedSources: string[];
 };
 
-function successMessage({ added, failedSources }: FetchResult) {
-  const base =
+function successMessage({ added, failed, remaining, failedSources }: FetchResult) {
+  let message =
     added > 0 ? `새 기사 ${added}개를 추가했어요.` : "새로 추가할 기사가 없어요.";
-  return failedSources.length > 0
-    ? `${base} (${failedSources.join(", ")} 가져오기 실패)`
-    : base;
+  if (remaining > 0) message += ` 남은 ${remaining}개는 다시 눌러 가져오세요.`;
+  if (failed > 0) message += ` (${failed}개는 AI 처리에 실패해 다음에 다시 시도해요)`;
+  if (failedSources.length > 0) {
+    message += ` (${failedSources.join(", ")} 가져오기 실패)`;
+  }
+  return message;
 }
 
 export function FetchNewsButton() {

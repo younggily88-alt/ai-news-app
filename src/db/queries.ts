@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull } from "drizzle-orm";
 import { db } from "./index";
 import { articles, categories } from "./schema";
 
@@ -44,18 +44,29 @@ export async function getArticles(userId: string, categoryId?: number | null) {
     .orderBy(desc(articles.publishedAt), desc(articles.id));
 }
 
-type NewsItem = {
+// 주어진 URL 중 이 사용자가 이미 저장한 것만 돌려준다.
+export async function getExistingUrls(userId: string, urls: string[]) {
+  if (urls.length === 0) return new Set<string>();
+
+  const rows = await db
+    .select({ url: articles.url })
+    .from(articles)
+    .where(and(eq(articles.userId, userId), inArray(articles.url, urls)));
+  return new Set(rows.map((row) => row.url));
+}
+
+type EnrichedNewsItem = {
   url: string;
   source: string;
   title: string;
-  summary: string;
+  titleKo: string;
+  summaryKo: string;
+  categoryId: number | null;
   publishedAt: Date;
 };
 
 // 이미 저장된 URL((user_id, url) 기준)은 건너뛰고, 새로 저장된 개수를 반환한다.
-// 번역·분류 전이므로 title_ko/summary_ko 에는 원문 제목과 RSS 요약을 임시로 넣고,
-// category_id 는 비워 둔다(미분류).
-export async function insertArticles(userId: string, items: NewsItem[]) {
+export async function insertArticles(userId: string, items: EnrichedNewsItem[]) {
   if (items.length === 0) return 0;
 
   const inserted = await db
@@ -66,8 +77,9 @@ export async function insertArticles(userId: string, items: NewsItem[]) {
         url: item.url,
         source: item.source,
         originalTitle: item.title,
-        titleKo: item.title,
-        summaryKo: item.summary,
+        titleKo: item.titleKo,
+        summaryKo: item.summaryKo,
+        categoryId: item.categoryId,
         publishedAt: item.publishedAt,
       })),
     )
