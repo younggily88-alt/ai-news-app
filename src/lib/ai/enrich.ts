@@ -24,9 +24,11 @@ function buildSchema(categoryIds: number[]) {
     properties: {
       titleKo: { type: "string" },
       summaryKo: { type: "string" },
-      categoryId: {
-        anyOf: [{ type: "integer", enum: categoryIds }, { type: "null" }],
-      },
+      // enum 은 빈 배열이면 API 가 거부하므로, 카테고리가 없으면 null 만 허용한다.
+      categoryId:
+        categoryIds.length > 0
+          ? { anyOf: [{ type: "integer", enum: categoryIds }, { type: "null" }] }
+          : { type: "null" },
     },
     required: ["titleKo", "summaryKo", "categoryId"],
     additionalProperties: false,
