@@ -2,17 +2,12 @@
 //   npx tsx --env-file=.env.local src/db/seed.ts
 import { eq } from "drizzle-orm";
 import { db } from "./index";
+import { DEFAULT_CATEGORIES } from "../lib/categories";
 import { articles, categories } from "./schema";
 
 const USER_ID = "user_3LWvuHWPCdMqoPMJxh6fqv9giN3"; // 내 Clerk 사용자 ID
 
-const categorySeeds = [
-  { name: "모델·연구", description: "새 AI 모델 발표, 논문, 벤치마크" },
-  { name: "기업·투자", description: "기업 동향, 투자, 인수합병" },
-  { name: "규제·정책", description: "법안, 정부 정책, 규제" },
-  { name: "제품·서비스", description: "AI 제품 출시와 서비스 업데이트" },
-  { name: "기타", description: "위에 해당하지 않는 기사" },
-];
+const categorySeeds = DEFAULT_CATEGORIES;
 
 const articleSeeds = [
   {
@@ -23,7 +18,7 @@ const articleSeeds = [
     summaryKo:
       "한 AI 스타트업이 가중치를 공개한 추론 특화 모델을 내놓았다. 수학·코딩 벤치마크에서 상위 비공개 모델과 비슷한 점수를 기록했다고 밝혔다. 연구자와 개발자가 자유롭게 내려받아 미세조정할 수 있어 오픈소스 진영의 경쟁력이 높아질 전망이다.",
     publishedAt: new Date("2026-11-02T14:30:00Z"),
-    category: "모델·연구",
+    category: "연구&논문",
   },
   {
     source: "The Verge AI",
@@ -33,7 +28,7 @@ const articleSeeds = [
     summaryKo:
       "AI 반도체 설계 기업이 20억 달러 규모의 신규 투자를 받았다. 생성형 AI 확산으로 데이터센터 증설 수요가 커지면서 투자자들의 관심이 몰렸다. 회사는 조달 자금을 차세대 칩 개발과 생산 확대에 쓸 계획이다.",
     publishedAt: new Date("2026-11-02T09:10:00Z"),
-    category: "기업·투자",
+    category: "산업&비즈니스",
   },
   {
     source: "TechCrunch AI",
@@ -43,7 +38,7 @@ const articleSeeds = [
     summaryKo:
       "의회에서 AI로 만든 정치 광고에 'AI 생성' 표기를 의무화하는 법안이 발의됐다. 딥페이크를 이용한 선거 여론 조작을 막으려는 취지다. 업계는 표기 기준이 모호하다며 구체적인 가이드라인을 요구하고 있다.",
     publishedAt: new Date("2026-11-01T18:45:00Z"),
-    category: "규제·정책",
+    category: "정책&규제",
   },
   {
     source: "The Verge AI",
@@ -53,7 +48,7 @@ const articleSeeds = [
     summaryKo:
       '인기 사진 앱이 "배경을 노을로 바꿔줘"처럼 말로 지시하면 이미지를 편집해 주는 AI 어시스턴트를 도입했다. 기본 기능은 무료이고 고해상도 내보내기는 유료 구독에서 제공된다. 이번 주부터 순차적으로 적용된다.',
     publishedAt: new Date("2026-10-31T16:00:00Z"),
-    category: "제품·서비스",
+    category: "제품&출시",
   },
   {
     source: "The Verge AI",
