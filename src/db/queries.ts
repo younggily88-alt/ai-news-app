@@ -44,6 +44,55 @@ export async function getArticles(userId: string, categoryId?: number | null) {
     .orderBy(desc(articles.publishedAt), desc(articles.id));
 }
 
+// 노션 저장에 쓸 기사 한 건. 다른 사용자의 기사는 찾지 못한다.
+export async function getArticleForNotion(userId: string, articleId: number) {
+  const [row] = await db
+    .select({
+      titleKo: articles.titleKo,
+      summaryKo: articles.summaryKo,
+      source: articles.source,
+      url: articles.url,
+      publishedAt: articles.publishedAt,
+      notionSaved: articles.notionSaved,
+      categoryName: categories.name,
+    })
+    .from(articles)
+    .leftJoin(
+      categories,
+      and(
+        eq(articles.categoryId, categories.id),
+        eq(categories.userId, userId),
+      ),
+    )
+    .where(and(eq(articles.userId, userId), eq(articles.id, articleId)));
+  return row ?? null;
+}
+
+// notion_saved 를 false -> true 로 바꾸는 데 성공한 요청 하나만 true 를 돌려준다.
+// 중복 클릭이나 동시 요청이 와도 노션에는 한 번만 저장되게 막는 장치다.
+export async function claimNotionSave(userId: string, articleId: number) {
+  const claimed = await db
+    .update(articles)
+    .set({ notionSaved: true })
+    .where(
+      and(
+        eq(articles.userId, userId),
+        eq(articles.id, articleId),
+        eq(articles.notionSaved, false),
+      ),
+    )
+    .returning({ id: articles.id });
+  return claimed.length > 0;
+}
+
+// 노션 저장에 실패했을 때 표시를 되돌려 다시 시도할 수 있게 한다.
+export async function releaseNotionSave(userId: string, articleId: number) {
+  await db
+    .update(articles)
+    .set({ notionSaved: false })
+    .where(and(eq(articles.userId, userId), eq(articles.id, articleId)));
+}
+
 // 주어진 URL 중 이 사용자가 이미 저장한 것만 돌려준다.
 export async function getExistingUrls(userId: string, urls: string[]) {
   if (urls.length === 0) return new Set<string>();

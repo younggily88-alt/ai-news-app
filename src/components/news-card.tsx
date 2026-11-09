@@ -1,4 +1,5 @@
 import type { ArticleListItem } from "@/db/queries";
+import { NotionSaveButton } from "./notion-save-button";
 
 // 한국 시간 기준 YYYY.MM.DD
 function formatDate(date: Date) {
@@ -47,11 +48,10 @@ export function NewsCard({ article }: { article: ArticleListItem }) {
         >
           원문 보기 ↗
         </a>
-        {article.notionSaved && (
-          <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-            ✓ 저장됨
-          </span>
-        )}
+        <NotionSaveButton
+          articleId={article.id}
+          initialSaved={article.notionSaved}
+        />
       </div>
     </article>
   );
